@@ -16,12 +16,14 @@ Uh oh! You waited too long to sell last term's textbooks back to the Reed bookst
 7. *speed.gif* and *shortest.gif* : Visualize results using gnuplot. Sample graphs are generated from 10 million iterations, for moderately better consistency with number of cities in *challenge.tsv* than the shorter runtime of a million iterations.
 
 **Parts from Part 2**
+
 *Chromosome* class
 1. *is_valid()* : Check object's chromosome for duplicate indices, or any indices out of range. If either is found, return false.
 2. *get_fitness()* : Return a value representing the object's "fitness", higher for better and lower if worse.
 3. Constructor/destructor : No changes.
 4. *mutate()* : Create variation by swapping two values in the object's chromosome permutation.
 5. *recombine()* : Take an other parent chromosome, and use *create_crossover_child()* to combine its object parent and the other parent via ordered crossover.
+
 *Deme* class
 1. Constructor :
 2. *get_best()* :

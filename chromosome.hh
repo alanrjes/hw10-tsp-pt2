@@ -1,5 +1,4 @@
-/*
- * Declarations for Chromosome class to be used in a genetic algorithm (GA) to
+/* Declarations for Chromosome class to be used in a genetic algorithm (GA) to
  * approximate the travelling-salesperson problem (TSP).
  * A chromosome represents a permutation on the orders of the cities to visit.
  * Includes common GA operators: mutate and recombine.
@@ -21,15 +20,14 @@ class Chromosome {
   Chromosome& operator=(Chromosome&&) = delete;
 
  public:
-  // Creation method for new Chromsomoe. Saves a copy of the cities and
+  // Creation method for new Chromosome. Saves a copy of the cities and
   // generates a completely random permutation from a list of cities.
   Chromosome(const Cities*);
 
   // Polymorphic creation method from an existing Chromosome.
   // This method allocates memory for the newly created chromosome.
   // It is the caller's responsibility to free this memory.
-  virtual Chromosome* clone() const
-  {
+  virtual Chromosome* clone() const {
     return new Chromosome(cities_ptr_);
   }
 
@@ -42,12 +40,10 @@ class Chromosome {
   // Return a pair of offsprings by recombining with another chromosome
   // Note: this method allocates memory for the new offsprings
   // It is the caller's responsibility to free this memory.
-  virtual std::pair<Chromosome*, Chromosome*>
-  recombine(const Chromosome* other);
+  virtual std::pair<Chromosome*, Chromosome*> recombine(const Chromosome* other);
 
   // Compute total distance to traverse cities in ordering:
-  double calculate_total_distance() const
-  {
+  double calculate_total_distance() const {
     return cities_ptr_->total_path_distance(order_);
   }
 
@@ -56,8 +52,7 @@ class Chromosome {
   virtual double get_fitness() const;
 
   // Return an immutable reference to the city ordering.
-  const Cities::permutation_t& get_ordering() const
-  {
+  const Cities::permutation_t& get_ordering() const {
     return order_;
   }
 
@@ -65,19 +60,12 @@ class Chromosome {
   // For an ordered set of parents, return a child using the ordered crossover.
   // The child will have the same values as p1 in the range [begin,end),
   // and all the other values in the same order as in p2.
-  virtual Chromosome*
-  create_crossover_child(const Chromosome* parent1,
-                         const Chromosome* parent2,
-                         unsigned begin,
-                         unsigned end) const;
+  virtual Chromosome* create_crossover_child(const Chromosome* parent1, const Chromosome* parent2, unsigned begin, unsigned end) const;
 
-  // A chromsome is valid if it has no repeated values in its permutation,
-  // as well as no indices above the range (length) of the chromosome.
+  // A chromsome is valid if it has no repeated values in its permutation, as well as no indices above the range (length) of the chromosome.
   bool is_valid() const;
 
-  // Find whether a certain value appears in a given range of the chromosome.
-  // Returns true if value is in order_ within the specified the range specified
-  // [begin, end) and false otherwise.
+  // Find whether a certain value appears in a given range of the chromosome. Returns true if value is in order_ within the specified the range specified [begin, end) and false otherwise.
   bool is_in_range(unsigned value, unsigned begin, unsigned end) const;
 
   const Cities* cities_ptr_; // Keep ptr to cities, no need for full copy

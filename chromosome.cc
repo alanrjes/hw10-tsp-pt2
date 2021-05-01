@@ -1,60 +1,83 @@
-/*
- * Implementation for Chromosome class
- */
-
 #include <algorithm>
 #include <cassert>
 #include <random>
 
 #include "chromosome.hh"
 
-//////////////////////////////////////////////////////////////////////////////
-// Generate a completely random permutation from a list of cities
+// Constructor: generate a completely random permutation from a list of cities
 Chromosome::Chromosome(const Cities* cities_ptr)
-  : cities_ptr_(cities_ptr),
-    order_(random_permutation(cities_ptr->size())),
-    generator_(rand())
-{
+  : cities_ptr_(cities_ptr), order_(random_permutation(cities_ptr->size())), generator_(rand()) {
   assert(is_valid());
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Clean up as necessary
-Chromosome::~Chromosome()
-{
+// Destructor: clean up as necessary
+Chromosome::~Chromosome() {
   assert(is_valid());
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Perform a single mutation on this chromosome
-void
-Chromosome::mutate()
-{
-  // Add your implementation here
+// A chromosome is valid if it has no repeated values in its permutation, as well as no indices above the range (length) of the chromosome.
+// We implement this check with a sort, which is a bit inefficient, but simple
+bool Chromosome::is_valid() const {
+  permutation_t sorted = std::sort(order_.begin(), order_.end());
+  int len = sorted.size();
 
+  for (int i=1; i<len; i++) {
+    if (sorted[i-1] == sorted[i]) {  // check for duplicates
+      return false;
+    }
+  }
+
+  if (sorted[len] >= len) {  // index out of range of chromosome length
+    return false;
+  }
+
+  else {
+    return true;
+  }
+}
+
+// Return a positive fitness value, with higher numbers representing fitter solutions (shorter total-city traversal path).
+double Chromosome::get_fitness() const {
+  double dist = cities_ptr.total_path_distance(order_);
+  return 1/dist;
+}
+
+// Perform a single mutation on this chromosome by swapping two values
+void Chromosome::mutate() {
+  int len = order_.size();
+  int i1, i2;
+  while (i1==i2) {
+    i1 = std::rand() %len;
+    i2 = std::rand() %len;
+  }
+  int val1 = order_[i1];
+  order_[i1] = order_[i2];
+  order_[i2] = val1;
   assert(is_valid());
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Return a pair of offsprings by recombining with another chromosome
-// Note: this method allocates memory for the new offsprings
-std::pair<Chromosome*, Chromosome*>
-Chromosome::recombine(const Chromosome* other)
-{
+// Return a pair of offsprings by recombining with another chromosome. Note: this method allocates memory for the new offsprings
+std::pair<Chromosome*, Chromosome*> Chromosome::recombine(const Chromosome* other) {
   assert(is_valid());
   assert(other->is_valid());
-
-  // Add your implementation here
+  Chromosome* child = create_crossover_child(this, other);
+  return child;
 }
 
-//////////////////////////////////////////////////////////////////////////////
+// Find whether a certain value appears in a given range of the chromosome.
+// Returns true if value is within the specified the range specified [begin, end) and false otherwise.
+bool Chromosome::is_in_range(unsigned value, unsigned begin, unsigned end) const {
+  for (int i=begin; i<end; i++) {
+    if (value == order_[i]) {
+      return true
+    }
+  }
+  return false
+}
+
 // For an ordered set of parents, return a child using the ordered crossover.
-// The child will have the same values as p1 in the range [b,e),
-// and all the other values in the same order as in p2.
-Chromosome*
-Chromosome::create_crossover_child(const Chromosome* p1, const Chromosome* p2,
-                                   unsigned b, unsigned e) const
-{
+// The child will have the same values as p1 in the range [b,e), and all the other values in the same order as in p2.
+Chromosome* Chromosome::create_crossover_child(const Chromosome* p1, const Chromosome* p2, unsigned b, unsigned e) const {
   Chromosome* child = p1->clone();
 
   // We iterate over both parents separately, copying from parent1 if the
@@ -77,30 +100,4 @@ Chromosome::create_crossover_child(const Chromosome* p1, const Chromosome* p2,
 
   assert(child->is_valid());
   return child;
-}
-
-// Return a positive fitness value, with higher numbers representing
-// fitter solutions (shorter total-city traversal path).
-double
-Chromosome::get_fitness() const
-{
-  // Add your implementation here
-}
-
-// A chromsome is valid if it has no repeated values in its permutation,
-// as well as no indices above the range (length) of the chromosome.
-// We implement this check with a sort, which is a bit inefficient, but simple
-bool
-Chromosome::is_valid() const
-{
-  // Add your implementation here
-}
-
-// Find whether a certain value appears in a given range of the chromosome.
-// Returns true if value is within the specified the range specified
-// [begin, end) and false otherwise.
-bool
-Chromosome::is_in_range(unsigned value, unsigned begin, unsigned end) const
-{
-  // Add your implementation here
 }

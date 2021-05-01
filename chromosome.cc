@@ -5,8 +5,9 @@
 #include "chromosome.hh"
 
 // Constructor: generate a completely random permutation from a list of cities
-Chromosome::Chromosome(const Cities* cities_ptr)
-  : cities_ptr_(cities_ptr), order_(random_permutation(cities_ptr->size())), generator_(rand()) {
+Chromosome::Chromosome(Cities* cities_ptr) {
+  cities_ptr_ = cities_ptr;
+  order_ = cities_ptr -> random_permutation();
   assert(is_valid());
 }
 
@@ -18,7 +19,8 @@ Chromosome::~Chromosome() {
 // A chromosome is valid if it has no repeated values in its permutation, as well as no indices above the range (length) of the chromosome.
 // We implement this check with a sort, which is a bit inefficient, but simple
 bool Chromosome::is_valid() const {
-  permutation_t sorted = std::sort(order_.begin(), order_.end());
+  Cities::permutation_t sorted = order_;
+  std::sort(sorted.begin(), sorted.end());
   int len = sorted.size();
 
   for (int i=1; i<len; i++) {
@@ -38,7 +40,7 @@ bool Chromosome::is_valid() const {
 
 // Return a positive fitness value, with higher numbers representing fitter solutions (shorter total-city traversal path).
 double Chromosome::get_fitness() const {
-  double dist = cities_ptr.total_path_distance(order_);
+  double dist = cities_ptr_ -> total_path_distance(order_);
   return 1/dist;
 }
 
@@ -57,10 +59,23 @@ void Chromosome::mutate() {
 }
 
 // Return a pair of offsprings by recombining with another chromosome. Note: this method allocates memory for the new offsprings
-std::pair<Chromosome*, Chromosome*> Chromosome::recombine(const Chromosome* other) {
+Chromosome* Chromosome::recombine(const Chromosome* other) {
   assert(is_valid());
   assert(other->is_valid());
-  Chromosome* child = create_crossover_child(this, other);
+
+  int len = order_.size();
+  int lower, upper;
+  while (lower==upper) {  // generate different lower and upper bounds of a range
+    lower = std::rand() %len;
+    upper = std::rand() %len;
+  }
+  if (lower>upper) {  // if lower and upper bounds are swapped, switch them
+    int lowholder = lower;
+    lower = upper;
+    upper = lowholder;
+  }
+
+  Chromosome* child = create_crossover_child(this, other, lower, upper);
   return child;
 }
 
@@ -69,10 +84,10 @@ std::pair<Chromosome*, Chromosome*> Chromosome::recombine(const Chromosome* othe
 bool Chromosome::is_in_range(unsigned value, unsigned begin, unsigned end) const {
   for (int i=begin; i<end; i++) {
     if (value == order_[i]) {
-      return true
+      return true;
     }
   }
-  return false
+  return false;
 }
 
 // For an ordered set of parents, return a child using the ordered crossover.

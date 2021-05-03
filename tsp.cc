@@ -1,5 +1,3 @@
-// Version provided on moodle
-
 #include "cities.hh"
 #include "deme.hh"
 
@@ -10,50 +8,19 @@
 #include <fstream>
 #include <numeric>
 
-// Check whether a specific ordering reduces the total path distance in cities from a previous best distance.
-// If so, print out the iteration number and new distance, update the best distance, and return true.
-// Returns false if no improvement was found.
-bool is_improved(const Cities& cities, const Cities::permutation_t& ordering, double& best_dist, uint64_t iter) {
-  const auto dist = cities.total_path_distance(ordering);
-  if (dist < best_dist) {
-    std::cout << iter << "\t" << dist << std::endl;
-    best_dist = dist;
-    return true;
-  }
-  return false;
-}
-
-// randomized_search searches niter randomized operdinges on the given cities. The best cities permutation is returned.
-Cities::permutation_t randomized_search(const Cities& cities, uint64_t niter) {
-  auto best_ordering = Cities::permutation_t(cities.size());
-  auto best_dist = 1e100;
-
-  for (uint64_t i = 0; i < niter; ++i) {
-    auto ordering = random_permutation(cities.size());
-    if (is_improved(cities, ordering, best_dist, i)) {
-      best_ordering = ordering;
+Cities::permutation_t random_search(Cities& cities, unsigned iters) {  // my own code from part 1
+  Cities::permutation_t bestroute;
+  double bestdist;
+  for (int i=0; i<iters; i++) {
+    Cities::permutation_t nroute = cities.random_permutation();
+    double ndist = cities.total_path_distance(nroute);
+    if (ndist < bestdist || !i) {  // update bestroute if better ordering of route or first iteration
+      bestroute = nroute;
+      bestdist = ndist;
+      std::cout << i << " " << bestdist << std::endl;
     }
   }
-
-  return best_ordering;
-}
-
-// exhaustive_search searches every single permutation of the cities. The best cities permutation is returned.
-Cities::permutation_t exhaustive_search(const Cities& cities) {
-  auto ordering = Cities::permutation_t(cities.size());
-  std::iota(ordering.begin(), ordering.end(), 0);
-  auto best_ordering = ordering;
-  auto best_dist = 1e100;
-  uint64_t i = 0;
-
-  do {
-    i++;
-    if (is_improved(cities, ordering, best_dist, i)) {
-      best_ordering = ordering;
-    }
-  } while (std::next_permutation(ordering.begin(), ordering.end()));
-
-  return best_ordering;
+  return bestroute;
 }
 
 // ga_search uses a genetic algorithm to solve the traveling salesperson problem for a given list of cities.
@@ -61,7 +28,7 @@ Cities::permutation_t exhaustive_search(const Cities& cities) {
 // The function also requires a population size and mutation rate, to indicate how aggressively the population's individuals mutate.
 // The function then repeatedly evolves the population to generate increasingly better (i.e. shorter total distances) city permutations.
 // The best cities permutation is returned.
-Cities::permutation_t ga_search(const Cities& cities, unsigned iters, unsigned pop_size, double mutation_rate) {
+Cities::permutation_t ga_search(Cities& cities, unsigned iters, unsigned pop_size, double mutation_rate) {
   auto best_dist = 1e100;
   auto best_ordering = Cities::permutation_t(cities.size());
 
@@ -82,30 +49,27 @@ Cities::permutation_t ga_search(const Cities& cities, unsigned iters, unsigned p
 }
 
 
-int main(int argc, char** argv) {
+int main(int argc, char* argv[]) {  // heavily reworked the version from moodle, to work with how I have Cities set up
   if (argc != 4) {
     std::cerr << "Required arguments: filename for cities, population size, and mutation rate\n";
     return -1;
   }
 
-  const auto cities = Cities(argv[1]);
-  const auto pop_size = atoi(argv[2]);
-  const auto mut_rate = atof(argv[3]);
-  constexpr unsigned NUM_ITER = 100000;
-  assert(cities.size() > 0 && "Did you actually read the input file successfully?");
+  char* filename = argv[1];  // if the user gives multiple file arguments, just use the first
+  std::ifstream ifile(filename);  // file stream to read
+  Cities cities;
+  ifile >> cities;  // read file map to cities object
 
+  auto popsize = atoi(argv[2]);
+  auto mutrate = atof(argv[3]);
 
-//  const auto best_ordering = exhaustive_search(cities);
-//  const auto best_ordering = randomized_search(cities, NUM_ITER);
-  const auto best_ordering = ga_search(cities, NUM_ITER, pop_size, mut_rate);
+  constexpr unsigned itercount = 100000;
+//  Cities::permutation_t bestroute = ga_search(cities, itercount, popsize, mutrate);
+  Cities::permutation_t bestroute = random_search(cities, itercount);
 
-  auto out = std::ofstream("shortest.tsv");
-  if (!out.is_open()) {
-    std::cerr << "Can't open output file to record shortest path!\n";
-    return -2;
-  }
-
-  out << cities.reorder(best_ordering);
-
+  Cities bestcities = cities.reorder(bestroute);
+  std::ofstream ofile("shortest.tsv");  // file stream to write
+//  std::ofstream ofile("randomized.tsv");
+  ofile << bestcities;
   return 0;
 }

@@ -58,7 +58,7 @@ Cities::permutation_t exhaustive_search(const Cities& cities) {
 
 // ga_search uses a genetic algorithm to solve the traveling salesperson problem for a given list of cities.
 // This function then creates a randomly generated population of permutations for traveling to those cities.
-// The function also requires a population size and mutation rate indicates how aggressively the population's individuals mutate.
+// The function also requires a population size and mutation rate, to indicate how aggressively the population's individuals mutate.
 // The function then repeatedly evolves the population to generate increasingly better (i.e. shorter total distances) city permutations.
 // The best cities permutation is returned.
 Cities::permutation_t ga_search(const Cities& cities, unsigned iters, unsigned pop_size, double mutation_rate) {
@@ -82,18 +82,13 @@ Cities::permutation_t ga_search(const Cities& cities, unsigned iters, unsigned p
 }
 
 
-int main(int argc, char* argv[]) {
+int main(int argc, char** argv) {
   if (argc != 4) {
     std::cerr << "Required arguments: filename for cities, population size, and mutation rate\n";
     return -1;
   }
-  // modified to work with how I set up cities >>
-  char* filename = argv[1];  // if the user gives multiple file arguments, just use the first
-  std::ifstream ifile(filename);  // file stream to read
-  const auto cities = Cities();
-  ifile >> cities;
-  // end of modification
-    
+
+  const auto cities = Cities(argv[1]);
   const auto pop_size = atoi(argv[2]);
   const auto mut_rate = atof(argv[3]);
   constexpr unsigned NUM_ITER = 100000;

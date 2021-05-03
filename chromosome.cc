@@ -59,8 +59,8 @@ void Chromosome::mutate() {
 }
 
 // Return a pair of offsprings by recombining with another chromosome. Note: this method allocates memory for the new offsprings
-pair<Chromosome*, Chromosome*> Chromosome::recombine(const Chromosome* other) {
-  pair<Chromosome*, Chromosome*> children;
+std::pair<Chromosome*, Chromosome*> Chromosome::recombine(const Chromosome* other) {
+  std::pair<Chromosome*, Chromosome*> children;
   for (int i=0; i<2; i++) {
     assert(is_valid());
     assert(other->is_valid());

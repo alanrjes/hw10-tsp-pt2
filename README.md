@@ -28,7 +28,7 @@ Uh oh! You waited too long to sell last term's textbooks back to the Reed bookst
 1. Constructor : Take a *Cities* object, population size, and mutation rate, and generate a random population of *Chromosome* objects from the *Cities* object.
 2. *get_best()* : Return the chromosome with the highest fitness in the population.
 3. *select_parent()* : Return a chromosome to become a parent, selected from the population via a fitness proportionate randomized selection.
-4. *compute_next_generation()* method :
+4. *compute_next_generation()* : Pick two parents at random, potentially mutate based on population object's mutation rate, and recombine. Add both children to a new generation population, repeat for half the population size number of iterations, and when done, replace the object's population with the new generation population.
 3. Putting it all together : ????, profit.
 
 **Authors**

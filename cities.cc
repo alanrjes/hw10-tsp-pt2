@@ -6,21 +6,19 @@
 #include <ctime>
 #include <iostream>
 
-std::istream& operator>> (std::istream& is, Cities& cities) {
-  Cities::coord_t coords;
-  int i = 0;
-  while (is>> coords.first>> coords.second) {
-    cities.map_.push_back(coords);
-    i++;
+std::istream& operator>>(std::istream& is, Cities& cities) {  // from given code
+  cities.cities_ = Cities::cities_t();
+  Cities::coord_t city;
+  while (is >> city.first) {
+    is >> city.second;
+    cities.cities_.push_back(city);
   }
   return is;
 }
 
-std::ostream& operator<< (std::ostream& os, Cities& cities) {
-  int len = cities.map_.size();
-  for (int i=0; i<len; i++) {
-    Cities::coord_t coords = cities.map_[i];
-    os<< coords.first<< " "<< coords.second<< "\n";
+std::ostream& operator<<(std::ostream& os, const Cities& cities) {  // from given code
+  for (const auto& c : cities.cities_) {
+    os << c.first << "\t" << c.second << "\n";
   }
   return os;
 }

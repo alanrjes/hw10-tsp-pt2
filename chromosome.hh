@@ -39,7 +39,7 @@ public:
   // Return a pair of offsprings by recombining with another chromosome
   // Note: this method allocates memory for the new offsprings
   // It is the caller's responsibility to free this memory.
-  Chromosome* recombine(const Chromosome* other);
+  std::pair<Chromosome*, Chromosome*> recombine(const Chromosome* other);
 
   // Compute total distance to traverse cities in ordering:
   double calculate_total_distance() const {

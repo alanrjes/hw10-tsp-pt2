@@ -59,24 +59,33 @@ void Chromosome::mutate() {
 }
 
 // Return a pair of offsprings by recombining with another chromosome. Note: this method allocates memory for the new offsprings
-Chromosome* Chromosome::recombine(const Chromosome* other) {
-  assert(is_valid());
-  assert(other->is_valid());
+pair<Chromosome*, Chromosome*> Chromosome::recombine(const Chromosome* other) {
+  pair<Chromosome*, Chromosome*> children;
+  for (int i=0; i<2; i++) {
+    assert(is_valid());
+    assert(other->is_valid());
 
-  int len = order_.size();
-  int lower, upper;
-  while (lower==upper) {  // generate different lower and upper bounds of a range
-    lower = std::rand() %len;
-    upper = std::rand() %len;
-  }
-  if (lower>upper) {  // if lower and upper bounds are swapped, switch them
-    int lowholder = lower;
-    lower = upper;
-    upper = lowholder;
-  }
+    int len = order_.size();
+    int lower, upper;
+    while (lower==upper) {  // generate different lower and upper bounds of a range
+      lower = std::rand() %len;
+      upper = std::rand() %len;
+    }
+    if (lower>upper) {  // if lower and upper bounds are swapped, switch them
+      int lowholder = lower;
+      lower = upper;
+      upper = lowholder;
+    }
 
-  Chromosome* child = create_crossover_child(this, other, lower, upper);
-  return child;
+    Chromosome* child = create_crossover_child(this, other, lower, upper);
+    if (!i) {
+      children.first = child;
+    }
+    else {
+      children.second = child;
+    }
+  }
+  return children;
 }
 
 // Find whether a certain value appears in a given range of the chromosome.

@@ -1,8 +1,3 @@
-/*
- * Declarations for Deme class to evolve a genetic algorithm for the
- * travelling-salesperson problem.  A deme is a population of individuals.
- */
-
 #pragma once
 
 #include "chromosome.hh"
@@ -11,10 +6,10 @@
 #include <random>
 
 class Deme {
- public:
+public:
   // Generate a Deme of the specified size with all-random chromosomes.
   // Also receives a mutation rate in the range [0-1].
-  Deme(const Cities* cities_ptr, unsigned pop_size, double mut_rate);
+  Deme(Cities* cities_ptr, unsigned pop_size, double mut_rate);
 
   // Clean up as necessary
   virtual ~Deme();
@@ -31,10 +26,12 @@ class Deme {
   // Return a pointer to the chromosome with the highest fitness.
   const Chromosome* get_best() const;
 
- protected:
-  // Randomly select a chromosome in the population based on fitness and
-  // return a pointer to that chromosome.
+protected:
+  // Randomly select a chromosome in the population based on fitness and return a pointer to that chromosome.
   virtual Chromosome* select_parent();
+
+  // Helper function for compute_next_generation()
+  Chromosome* mutate_parent();
 
   std::vector<Chromosome*> pop_;  // Population of Chromosomes
   double mut_rate_;  // Mutation rate (fraction in range [0,1])

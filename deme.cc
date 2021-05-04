@@ -52,7 +52,6 @@ Chromosome* Deme::select_parent() {
   while (fitsum < target) {
     i++;
     fitsum += fitscores[i];
-    std::cout << i << ": " << fitsum << "<" << target << std::endl;
   }
   return pop_[i];
 }
@@ -66,7 +65,9 @@ void Deme::compute_next_generation() {
   for (int i=0; i<(pop_.size()/2); i++) {
     Chromosome* p1 = this -> mutate_parent();
     Chromosome* p2 = this -> mutate_parent();
+    std::cout << "here" << std::endl;
     std::pair<Chromosome*, Chromosome*> children = p1 -> recombine(p2);
+    std::cout << "now here" << std::endl;
     newpop.push_back(children.first);
     newpop.push_back(children.second);
   }
@@ -75,7 +76,6 @@ void Deme::compute_next_generation() {
 
 Chromosome* Deme::mutate_parent() {
   Chromosome* parent = this -> select_parent();
-  std::cout << "here" << std::endl;
   srand(time(NULL));
   int mutroll = rand() % 100;
   if (mutroll < mut_rate_*100) {

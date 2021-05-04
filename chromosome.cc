@@ -46,11 +46,12 @@ double Chromosome::get_fitness() const {
 
 // Perform a single mutation on this chromosome by swapping two values
 void Chromosome::mutate() {
-  int len = order_.size();
-  int i1, i2;
-  while (i1==i2) {
-    srand(time(NULL));
-    i1 = std::rand() %len;
+  int len = order_.size() - 1;
+  srand(time(NULL));
+  int i1 = std::rand() %len;
+  srand(time(NULL));
+  int i2 = std::rand() %len;
+  while (i1 == i2) {
     srand(time(NULL));
     i2 = std::rand() %len;
   }

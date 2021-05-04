@@ -13,7 +13,7 @@ Cities::permutation_t random_search(Cities& cities, unsigned iters) {
   Cities::permutation_t bestroute;
   double bestdist;
   for (int i=0; i<iters; i++) {
-    Cities::permutation_t nroute = cities.random_permutation();  // generate random permutation
+    const Cities::permutation_t& nroute = cities.random_permutation();  // generate random permutation
     double ndist = cities.total_path_distance(nroute);
     if (ndist < bestdist || !i) {  // update bestroute if better ordering of route or first iteration
       bestroute = nroute;
@@ -60,8 +60,8 @@ int main(int argc, char* argv[]) {
   double mutrate = atof(argv[3]);
 
   constexpr unsigned itercount = 100000;
-//  Cities::permutation_t bestroute = ga_search(cities, itercount, popsize, mutrate);
-  Cities::permutation_t bestroute = random_search(cities, itercount);
+  Cities::permutation_t bestroute = ga_search(cities, itercount, popsize, mutrate);
+//  Cities::permutation_t bestroute = random_search(cities, itercount);
 
   Cities bestcities = cities.reorder(bestroute);
   std::ofstream ofile("shortest.tsv");  // file stream to write

@@ -29,7 +29,7 @@ bool Chromosome::is_valid() const {
     }
   }
 
-  if (sorted[len] >= len) {  // index out of range of chromosome length
+  if (sorted[len - 1] >= len) {  // index out of range of chromosome length
     return false;
   }
 
@@ -49,7 +49,9 @@ void Chromosome::mutate() {
   int len = order_.size();
   int i1, i2;
   while (i1==i2) {
+    srand(time(NULL));
     i1 = std::rand() %len;
+    srand(time(NULL));
     i2 = std::rand() %len;
   }
   int val1 = order_[i1];
@@ -68,7 +70,9 @@ std::pair<Chromosome*, Chromosome*> Chromosome::recombine(const Chromosome* othe
     int len = order_.size();
     int lower, upper;
     while (lower==upper) {  // generate different lower and upper bounds of a range
+      srand(time(NULL));
       lower = std::rand() %len;
+      srand(time(NULL));
       upper = std::rand() %len;
     }
     if (lower>upper) {  // if lower and upper bounds are swapped, switch them

@@ -34,20 +34,25 @@ const Chromosome* Deme::get_best() const {
 // Randomly select a chromosome in the population based on fitness and return a pointer to that chromosome.
 Chromosome* Deme::select_parent() {
   double fitsum = 0;
-  std::vector<double> fitscores;  // so that we only have to run get_fitness on each chromosome once
+  std::vector<double> fitscores;  // store so that we only have to run get_fitness on each chromosome once
   for (int i=0; i<pop_.size(); i++) {
     Chromosome* thischromo = pop_[i];
     double fitness = thischromo -> get_fitness();
     fitsum += fitness;
     fitscores.push_back(fitness);
   }
-  int p = rand() % 100;  // doing integers out of 100 as to not worry about randomized decimals
-  int counter = 0;  // sum to "spin wheel" with
-  int i = -1;  // because i increments after the loop check
-  while (counter < p) {
+
+  // get randomized double for "roulette wheel" between 0 and the sum of fitness scores
+  std::uniform_real_distribution<double> unif(0, fitsum);
+  std::default_random_engine re;
+  double target = unif(re);
+
+  int i = -1;  // -1 because i increments after the loop check
+  fitsum = 0;
+  while (fitsum < target) {
     i++;
-    double adjustedfit = fitscores[i]*(100/fitsum);  // adjust each fitness score to be 0-100
-    counter += adjustedfit;
+    fitsum += fitscores[i];
+    std::cout << i << ": " << fitsum << "<" << target << std::endl;
   }
   return pop_[i];
 }
@@ -70,6 +75,8 @@ void Deme::compute_next_generation() {
 
 Chromosome* Deme::mutate_parent() {
   Chromosome* parent = this -> select_parent();
+  std::cout << "here" << std::endl;
+  srand(time(NULL));
   int mutroll = rand() % 100;
   if (mutroll < mut_rate_*100) {
     parent -> mutate();

@@ -41,11 +41,6 @@ public:
   // It is the caller's responsibility to free this memory.
   std::pair<Chromosome*, Chromosome*> recombine(const Chromosome* other);
 
-  // Compute total distance to traverse cities in ordering:
-  double calculate_total_distance() const {
-    return cities_ptr_->total_path_distance(order_);
-  }
-
   // Return a positive fitness value, with higher numbers representing
   // fitter solutions (shorter total-city traversal path).
   virtual double get_fitness() const;
@@ -69,6 +64,4 @@ protected:
 
   Cities* cities_ptr_; // Keep ptr to cities, no need for full copy
   Cities::permutation_t order_;  // The actual permutation of this chromosome
-
-  std::default_random_engine generator_; // A random number generator for the various methods
 };

@@ -41,7 +41,6 @@ Chromosome* Deme::select_parent() {
     fitsum += fitness;
     fitscores.push_back(fitness);
   }
-
   // get randomized double for "roulette wheel" between 0 and the sum of fitness scores
   std::uniform_real_distribution<double> unif(0, fitsum);
   std::default_random_engine re;
@@ -65,9 +64,7 @@ void Deme::compute_next_generation() {
   for (int i=0; i<(pop_.size()/2); i++) {
     Chromosome* p1 = this -> mutate_parent();
     Chromosome* p2 = this -> mutate_parent();
-    std::cout << "here" << std::endl;
     std::pair<Chromosome*, Chromosome*> children = p1 -> recombine(p2);
-    std::cout << "now here" << std::endl;
     newpop.push_back(children.first);
     newpop.push_back(children.second);
   }
@@ -76,7 +73,6 @@ void Deme::compute_next_generation() {
 
 Chromosome* Deme::mutate_parent() {
   Chromosome* parent = this -> select_parent();
-  srand(time(NULL));
   int mutroll = rand() % 100;
   if (mutroll < mut_rate_*100) {
     parent -> mutate();

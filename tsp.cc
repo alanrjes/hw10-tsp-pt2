@@ -35,6 +35,9 @@ Cities::permutation_t ga_search(Cities& cities, unsigned iters, unsigned populat
     deme.compute_next_generation();  // generate new generation
     Cities::permutation_t nroute = deme.get_best() -> get_ordering();  // get best out of the generation
     double ndist = cities.total_path_distance(nroute);
+
+//    std::cout << i << " " << ndist << std::endl;  // for testing
+
     if (ndist < bestdist || !i) {  // update bestroute if better ordering of route or first iteration
       bestroute = nroute;
       bestdist = ndist;
@@ -50,6 +53,8 @@ int main(int argc, char* argv[]) {
     std::cerr << "Required arguments: filename for cities, population size, and mutation rate\n";
     return -1;
   }
+
+  srand(time(NULL));
 
   char* filename = argv[1];  // if the user gives multiple file arguments, just use the first
   std::ifstream ifile(filename);  // file stream to read

@@ -63,7 +63,6 @@ Cities::permutation_t Cities::random_permutation() {
   permutation_t ordering(len);
   std::iota(std::begin(ordering), std::end(ordering), 0);  // populate ordering vector {0, 1, 2...len}
 
-  std::srand(unsigned(std::time(0)));  // seed randomization
   std::random_shuffle(std::begin(ordering), std::end(ordering));  // randomly shuffle vector
   return ordering;
 }

@@ -47,12 +47,9 @@ double Chromosome::get_fitness() const {
 // Perform a single mutation on this chromosome by swapping two values
 void Chromosome::mutate() {
   int len = order_.size() - 1;
-  srand(time(NULL));
   int i1 = std::rand() %len;
-  srand(time(NULL));
   int i2 = std::rand() %len;
   while (i1 == i2) {
-    srand(time(NULL));
     i2 = std::rand() %len;
   }
   int val1 = order_[i1];
@@ -69,11 +66,9 @@ std::pair<Chromosome*, Chromosome*> Chromosome::recombine(const Chromosome* othe
     assert(other->is_valid());
 
     int len = order_.size();
-    int lower, upper;
+    int lower = std::rand() %len;
+    int upper = std::rand() %len;
     while (lower==upper) {  // generate different lower and upper bounds of a range
-      srand(time(NULL));
-      lower = std::rand() %len;
-      srand(time(NULL));
       upper = std::rand() %len;
     }
     if (lower>upper) {  // if lower and upper bounds are swapped, switch them

@@ -31,18 +31,22 @@ Cities::permutation_t ga_search(Cities& cities, unsigned iters, unsigned populat
   Cities::permutation_t bestroute;
   double bestdist;
 
+//  double avg;  // FOR TESTING
+
   for (int i=0; i<(iters/population); i++) {
     deme.compute_next_generation();  // generate new generation
     Cities::permutation_t nroute = deme.get_best() -> get_ordering();  // get best out of the generation
     double ndist = cities.total_path_distance(nroute);
 
-//    std::cout << i << " " << ndist << std::endl;  // for testing
-
     if (ndist < bestdist || !i) {  // update bestroute if better ordering of route or first iteration
+
+//      std::cout << "Average improvement: " << avg << std::endl;  // FOR TESTING
+
       bestroute = nroute;
       bestdist = ndist;
       std::cout << i << " " << bestdist << std::endl;
     }
+//    avg = (avg + bestdist - ndist)/2;  // FOR TESTING
   }
   return bestroute;
 }

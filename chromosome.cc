@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <cassert>
 #include <random>
+#include <cmath>
 
 #include "chromosome.hh"
 
@@ -41,7 +42,8 @@ bool Chromosome::is_valid() const {
 // Return a positive fitness value, with higher numbers representing fitter solutions (shorter total-city traversal path).
 double Chromosome::get_fitness() const {
   double dist = cities_ptr_ -> total_path_distance(order_);
-  return 1/dist;
+  return std::pow(1/dist, 2);
+//  return 1/dist;
 }
 
 // Perform a single mutation on this chromosome by swapping two values
